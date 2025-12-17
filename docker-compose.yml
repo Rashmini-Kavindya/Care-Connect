@@ -1,22 +1,31 @@
+version: '3.8'
+
 services:
   backend:
     build: ./care-connect-backend
     ports:
       - "5000:5000"
-    env_file: 
+    env_file:
       - ./care-connect-backend/.env
-    networks:
-      - app-network
+    depends_on:
+      - mongo
 
   frontend:
     build: ./care-connect-frontend
     ports:
       - "5173:5173"
-    networks:
-      - app-network
-    depends_on:
-      - backend
+    volumes:
+      - ./care-connect-frontend:/app           
+      - /app/node_modules                      
+    environment:
+      - CHOKIDAR_USEPOLLING=true            
 
-networks:
-  app-network:
-    driver: bridge
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
