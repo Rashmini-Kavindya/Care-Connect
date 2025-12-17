@@ -1,20 +1,22 @@
-version: '3.8'
-
 services:
   backend:
     build: ./care-connect-backend
     ports:
       - "5000:5000"
-    volumes:
-      - ./care-connect-backend:/app
-      - /app/node_modules
+    env_file: 
+      - ./care-connect-backend/.env
+    networks:
+      - app-network
 
   frontend:
     build: ./care-connect-frontend
     ports:
       - "5173:5173"
-    volumes:
-      - ./care-connect-frontend:/app
-      - /app/node_modules
-    stdin_open: true
-    tty: true
+    networks:
+      - app-network
+    depends_on:
+      - backend
+
+networks:
+  app-network:
+    driver: bridge
